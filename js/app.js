@@ -70,8 +70,8 @@ var Player = function() {
 }
 
 Player.prototype.update = function() {
-    this.gameOver();
-    this.gameWin();
+    this.checkGameWin();
+    this.checkGameOver();
     this.checkBorder();
     this.checkCollisions();
 }
@@ -86,16 +86,17 @@ Player.prototype.startPosition = function() {
 }
 
 //When a player reaches the water, the win is increased
-Player.prototype.gameWin = function() {
+Player.prototype.checkGameWin = function() {
     if (this.y <= waterPosition) {
         this.win += 1;
         this.startPosition();
     }
 }
 
-Player.prototype.gameOver = function() {
+Player.prototype.checkGameOver = function() {
     if (this.life === 0) {
         this.resetGame();
+        console.log("GAME OVER");
     }
 }
 
@@ -117,7 +118,25 @@ Player.prototype.checkBorder = function() {
 }
 // Colision detection: when player hit an enemy
 Player.prototype.checkCollisions = function() {
+    allEnemies.forEach( function(enemy) {
+        console.log(player.x);
+        if (((enemy.x - 50)<= player.x) && ((enemy.x + 50) >= player.x) && ((enemy.y - 50) <= player.y) && ((enemy.y + 50) >= player.y)) {
+            console.log("Lost life");
+            player.lostLife();
+        }
+    })
+}
 
+//The life is increased when player get diamond
+Player.prototype.getLife = function() {
+    this.life += 1;
+    this.startPosition();
+}
+
+//When player hit enemy, the life is reduced by 1
+Player.prototype.lostLife = function() {
+    this.life -= 1;
+    this.startPosition();
 }
 
 Player.prototype.handleInput = function(actionKeyPress) {
