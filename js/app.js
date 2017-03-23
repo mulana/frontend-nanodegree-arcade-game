@@ -1,10 +1,14 @@
 // number of enemies on the canvas
 var numEnemies = 3;
+//canvas dimension that is define in engine.js
 var canvasWidth = 505;
 var canvasHeight = 606;
+//start Player position (X,Y)
 var playerStartPositionX = 200;
 var playerStartPositionY = 400;
+// water position on canvas 
 var waterPosition = 20;
+// Border for player that he can move only on the canvas
 var borderLeft = 5;
 var borderRight = 420;
 var borderDown = 406;
@@ -13,20 +17,20 @@ var borderDown = 406;
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-
+// Returns random Y position for enemy (1 or 2 or 3)
 function getRandomPositionY() {
     var num = getRandomInt(1, numEnemies);
     num = num * 75;
     return num;
 }
-
+// Returns random speed for enemy
 function getRandomSpeed() {
     var num = getRandomInt(1, numEnemies);
     num = num * 50;
     return num;
 }
 
-// Enemies our player must avoid
+// Enemies that our player must avoid
 var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -60,17 +64,19 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    // this.sprite = 'images/char-horn-girl.png';
+    alert(1);
+    // this.sprite = 'images/char-boy.png';
+    this.sprite = 'images/char-horn-girl.png';
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
     this.speed = 20;
-    this.win = 0;
+    this.score = 0;
     this.life = 3;
+    this.gameStop = false;
 }
 
 Player.prototype.update = function() {
-    this.checkGameWin();
+    this.checkGameScore();
     this.checkGameOver();
     this.checkBorder();
     this.checkCollisions();
@@ -78,34 +84,56 @@ Player.prototype.update = function() {
 
 Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.font = 'bold 35px Arial, sans-serif';
+    ctx.fillStyle = '#ff0000';
+    ctx.fillText("Lives: " + this.life, 10, 580);
+    ctx.fillText("Score: " + this.score, 350, 580);
+    if (this.gameStop === true) {
+        ctx.font = "bold italic 40px Arial, Helvetica, sans serif";
+        ctx.fillStyle = "#ff0000";
+        ctx.strokeStyle = "blue";
+        ctx.fillText("Game Over", 150, 300);
+        ctx.strokeText("Game Over", 150, 300);
+        ctx.font = "bold 24px Arial, Helvetica, sans serif";
+        ctx.fillStyle = "#fffd01";
+        ctx.fillText("PRESS SPACE TO TRY AGAIN", 75, 350);
+        ctx.strokeText("PRESS SPACE TO TRY AGAIN", 75, 350);
+    }
 }
-
+// Player's start position on canvas 
 Player.prototype.startPosition = function() {
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
 }
 
-//When a player reaches the water, the win is increased
-Player.prototype.checkGameWin = function() {
+// When a player reaches the water, the score is increased
+Player.prototype.checkGameScore = function() {
     if (this.y <= waterPosition) {
-        this.win += 1;
+        this.score += 1;
         this.startPosition();
     }
 }
-
+// Check if the game is over; when Player have no more life
 Player.prototype.checkGameOver = function() {
     if (this.life === 0) {
-        this.resetGame();
+        this.gameStop = true;
         console.log("GAME OVER");
     }
 }
-
+// Move the Player on the start position on the canvas
+Player.prototype.startGame = function() {
+    if (this.gameStop === true) {
+        this.resetGame();
+        this.gameStop = false;
+    }
+}
+// Set life and score lake they was on begining of the game
 Player.prototype.resetGame = function() {
     this.life = 3;
-    this.win = 0;
+    this.score = 0;
     this.startPosition();
 }
-
+// Checks if player moves only on the canvas border
 Player.prototype.checkBorder = function() {
     if (this.x <= borderLeft) {
         this.x = 405;
@@ -140,17 +168,24 @@ Player.prototype.lostLife = function() {
 }
 
 Player.prototype.handleInput = function(actionKeyPress) {
-    if (actionKeyPress == 'left') {
-        this.x -= this.speed;
-    }
-    if (actionKeyPress == 'right') {
-        this.x += this.speed;
-    }
-    if (actionKeyPress == 'up') {
-        this.y -= this.speed;
-    }
-    if (actionKeyPress == 'down') {
-        this.y += this.speed;
+    if (this.gameStop === false) {
+        if (actionKeyPress == 'left') {
+            this.x -= this.speed;
+        }
+        if (actionKeyPress == 'right') {
+            this.x += this.speed;
+        }
+        if (actionKeyPress == 'up') {
+            this.y -= this.speed;
+        }
+        if (actionKeyPress == 'down') {
+            this.y += this.speed;
+        }
+    } else {
+        // Press Space to Start Game again after Game Over
+        if (actionKeyPress == 'space') {
+            this.startGame();
+        }
     }
 }
 
@@ -171,6 +206,7 @@ var player = new Player;
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        32: 'space',
         37: 'left',
         38: 'up',
         39: 'right',
