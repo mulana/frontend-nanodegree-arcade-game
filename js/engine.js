@@ -94,6 +94,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
+        // gem.update();
         player.update();
     }
 
@@ -150,7 +151,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
+        gem.render();
         player.render();
     }
 
@@ -172,7 +173,8 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/char-horn-girl.png'
+        'images/char-horn-girl.png',
+        'images/GemOrange.png'
     ]);
     Resources.onReady(init);
 

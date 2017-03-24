@@ -6,18 +6,22 @@ var canvasHeight = 606;
 //start Player position (X,Y)
 var playerStartPositionX = 200;
 var playerStartPositionY = 400;
-// water position on canvas 
+// water position on canvas
 var waterPosition = 20;
 // Border for player that he can move only on the canvas
 var borderLeft = 5;
 var borderRight = 420;
 var borderDown = 406;
 
-// Returns a random integer. 
+// Returns a random integer.
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-// Returns random Y position for enemy (1 or 2 or 3)
+// Returns random X position for the Gem
+function getRandomPositionX() {
+    return getRandomInt(10, 300);
+}
+// Returns random Y position for enemy (1 or 2 or 3) and for Gem
 function getRandomPositionY() {
     var num = getRandomInt(1, numEnemies);
     num = num * 75;
@@ -29,20 +33,16 @@ function getRandomSpeed() {
     num = num * 50;
     return num;
 }
-
 // Enemies that our player must avoid
 var Enemy = function() {
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    // The image/sprite for our enemies, this uses a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = 0;
     this.y = getRandomPositionY();
     this.speed = getRandomSpeed();
-    // this.speed = 30;
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
+// Update the enemy's position, required method for game Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
@@ -59,13 +59,26 @@ Enemy.prototype.update = function(dt) {
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+// Object Gem with random X and Y position
+var Gem = function() {
+    this.sprite = 'images/GemOrange.png';
+    this.x = getRandomPositionX();
+    this.y = getRandomPositionY();
+}
+// Give Gem new position on canvas
+Gem.prototype.newPosition = function() {
+    this.x = getRandomPositionX();
+    this.y = getRandomPositionY();
+}
+// Draw Orange Gem on the screen (canvas)
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    alert(1);
-    // this.sprite = 'images/char-boy.png';
     this.sprite = 'images/char-horn-girl.png';
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
@@ -80,6 +93,7 @@ Player.prototype.update = function() {
     this.checkGameOver();
     this.checkBorder();
     this.checkCollisions();
+    this.checkGemCaught();
 }
 
 Player.prototype.render = function(){
@@ -100,7 +114,7 @@ Player.prototype.render = function(){
         ctx.strokeText("PRESS SPACE TO TRY AGAIN", 75, 350);
     }
 }
-// Player's start position on canvas 
+// Player's start position on canvas
 Player.prototype.startPosition = function() {
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
@@ -117,7 +131,6 @@ Player.prototype.checkGameScore = function() {
 Player.prototype.checkGameOver = function() {
     if (this.life === 0) {
         this.gameStop = true;
-        console.log("GAME OVER");
     }
 }
 // Move the Player on the start position on the canvas
@@ -147,18 +160,21 @@ Player.prototype.checkBorder = function() {
 // Colision detection: when player hit an enemy
 Player.prototype.checkCollisions = function() {
     allEnemies.forEach( function(enemy) {
-        console.log(player.x);
         if (((enemy.x - 50)<= player.x) && ((enemy.x + 50) >= player.x) && ((enemy.y - 50) <= player.y) && ((enemy.y + 50) >= player.y)) {
-            console.log("Lost life");
             player.lostLife();
         }
     })
 }
-
-//The life is increased when player get diamond
+// Gem detector: when player find gem
+Player.prototype.checkGemCaught = function() {
+    if (((gem.x - 50)<= player.x) && ((gem.x + 50) >= player.x) && ((gem.y - 50) <= player.y) && ((gem.y + 50) >= player.y)) {
+        player.getLife();
+        gem.newPosition();
+    }
+}
+//The life is increased when player get Gem
 Player.prototype.getLife = function() {
     this.life += 1;
-    this.startPosition();
 }
 
 //When player hit enemy, the life is reduced by 1
@@ -199,8 +215,10 @@ for (var i=0; i<numEnemies; i++) {
 }
 
 // Place the player object in a variable called player
-// Instantiate a new Player object
+// Create an instance player of class Player object
 var player = new Player;
+// Create an instance gem of class Gem object
+var gem = new Gem;
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
