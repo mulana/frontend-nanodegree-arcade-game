@@ -1,6 +1,6 @@
 // number of enemies on the canvas
 var numEnemies = 3;
-//canvas dimension that is define in engine.js
+// dimensions of canvas defined in engine.js
 var canvasWidth = 505;
 var canvasHeight = 606;
 //start Player position (X,Y)
@@ -8,7 +8,7 @@ var playerStartPositionX = 200;
 var playerStartPositionY = 400;
 // water position on canvas
 var waterPosition = 20;
-// Border for player that he can move only on the canvas
+// Boundaries for player sprite
 var borderLeft = 5;
 var borderRight = 420;
 var borderDown = 406;
@@ -21,7 +21,8 @@ function getRandomInt(min, max) {
 function getRandomPositionX() {
     return getRandomInt(10, 300);
 }
-// Returns random Y position for enemy (1 or 2 or 3) and for Gem
+// Returns random Y position for enemy or Gem
+// There are 3 rows of size 75 pixels each
 function getRandomPositionY() {
     var num = getRandomInt(1, numEnemies);
     num = num * 75;
@@ -64,16 +65,16 @@ var Gem = function() {
     this.sprite = 'images/GemOrange.png';
     this.x = getRandomPositionX();
     this.y = getRandomPositionY();
-}
+};
 // Give Gem new position on canvas
 Gem.prototype.newPosition = function() {
     this.x = getRandomPositionX();
     this.y = getRandomPositionY();
-}
+};
 // Draw Orange Gem on the screen (canvas)
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -82,11 +83,11 @@ var Player = function() {
     this.sprite = 'images/char-horn-girl.png';
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
-    this.speed = 20;
+    this.speed = 50;
     this.score = 0;
     this.life = 3;
     this.gameStop = false;
-}
+};
 
 Player.prototype.update = function() {
     this.checkGameScore();
@@ -94,7 +95,7 @@ Player.prototype.update = function() {
     this.checkBorder();
     this.checkCollisions();
     this.checkGemCaught();
-}
+};
 
 Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -113,40 +114,40 @@ Player.prototype.render = function(){
         ctx.fillText("PRESS SPACE TO TRY AGAIN", 75, 350);
         ctx.strokeText("PRESS SPACE TO TRY AGAIN", 75, 350);
     }
-}
+};
 // Player's start position on canvas
 Player.prototype.startPosition = function() {
     this.x = playerStartPositionX;
     this.y = playerStartPositionY;
-}
+};
 
-// When a player reaches the water, the score is increased
+// When player reaches the water we increase the score
 Player.prototype.checkGameScore = function() {
     if (this.y <= waterPosition) {
         this.score += 1;
         this.startPosition();
     }
-}
-// Check if the game is over; when Player have no more life
+};
+// Check if the game is over; when Player has no more lives
 Player.prototype.checkGameOver = function() {
     if (this.life === 0) {
         this.gameStop = true;
     }
-}
-// Move the Player on the start position on the canvas
+};
+// Move the Player to the start position on the canvas
 Player.prototype.startGame = function() {
     if (this.gameStop === true) {
         this.resetGame();
         this.gameStop = false;
     }
-}
-// Set life and score lake they was on begining of the game
+};
+// Reset values of life and score
 Player.prototype.resetGame = function() {
     this.life = 3;
     this.score = 0;
     this.startPosition();
-}
-// Checks if player moves only on the canvas border
+};
+// Check whether player position is within boundaries
 Player.prototype.checkBorder = function() {
     if (this.x <= borderLeft) {
         this.x = 405;
@@ -156,35 +157,48 @@ Player.prototype.checkBorder = function() {
     if (this.y >= borderDown) {
         this.y = 406;
     }
-}
-// Colision detection: when player hit an enemy
+};
+// Collision detection: find collisions with enemies and reduce number of
+// lives when collision is found
 Player.prototype.checkCollisions = function() {
     allEnemies.forEach( function(enemy) {
-        if (((enemy.x - 50)<= player.x) && ((enemy.x + 50) >= player.x) && ((enemy.y - 50) <= player.y) && ((enemy.y + 50) >= player.y)) {
-            player.lostLife();
+        if (((enemy.x - 50) <= player.x) &&
+            ((enemy.x + 50) >= player.x) &&
+            ((enemy.y - 50) <= player.y) &&
+            ((enemy.y + 50) >= player.y)) {
+                player.lostLife();
         }
-    })
-}
-// Gem detector: when player find gem
+    });
+};
+// Gem detector: find collision with gem and if found: move it to a new position
+// and increase life number
 Player.prototype.checkGemCaught = function() {
-    if (((gem.x - 50)<= player.x) && ((gem.x + 50) >= player.x) && ((gem.y - 50) <= player.y) && ((gem.y + 50) >= player.y)) {
-        player.getLife();
-        gem.newPosition();
+    if (((gem.x - 50)<= player.x) &&
+        ((gem.x + 50) >= player.x) &&
+        ((gem.y - 50) <= player.y) &&
+        ((gem.y + 50) >= player.y)) {
+            player.increaseLife();
+            gem.newPosition();
     }
-}
-//The life is increased when player get Gem
-Player.prototype.getLife = function() {
+};
+//The life is increased when player gets a gem
+Player.prototype.increaseLife = function() {
     this.life += 1;
-}
+};
 
-//When player hit enemy, the life is reduced by 1
+// When player hits an enemy, the life is reduced by 1
 Player.prototype.lostLife = function() {
     this.life -= 1;
     this.startPosition();
-}
+};
 
 Player.prototype.handleInput = function(actionKeyPress) {
-    if (this.gameStop === false) {
+    if (this.gameStop) {
+        // Press Space to Start Game again after Game Over
+        if (actionKeyPress == 'space') {
+            this.startGame();
+        }
+    } else {
         if (actionKeyPress == 'left') {
             this.x -= this.speed;
         }
@@ -197,28 +211,21 @@ Player.prototype.handleInput = function(actionKeyPress) {
         if (actionKeyPress == 'down') {
             this.y += this.speed;
         }
-    } else {
-        // Press Space to Start Game again after Game Over
-        if (actionKeyPress == 'space') {
-            this.startGame();
-        }
     }
-}
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
-for (var i=0; i<numEnemies; i++) {
+for (var i = 0; i < numEnemies; i++) {
     // Instantiate a new Enemies object
     var enemie = new Enemy();
     allEnemies[i] = enemie;
 }
-
-// Place the player object in a variable called player
-// Create an instance player of class Player object
-var player = new Player;
-// Create an instance gem of class Gem object
-var gem = new Gem;
+// Create an instance of a Player class
+var player = new Player();
+// Create an instance of a Gem class
+var gem = new Gem();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
