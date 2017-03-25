@@ -1,6 +1,18 @@
 frontend-nanodegree-arcade-game
 ===============================
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+## Intro
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+Classic Arcade Game Clone is a clone of a classic game [Frogger](https://en.wikipedia.org/wiki/Frogger) .
+The objective of the game is to move the main character towards the top of the field avoiding enemies (ladybugs).
+
+![Game ScreenShot](/images/GameScreenShot2.png)
+
+### Game Rules
+
+ - Use arrow keys to move player in any direction.
+ - Collect orange gems to get more lives.
+ - Score is increased by 1 on any successfull pass to the top of the play area without touching the enemies.
+ - When game is over, press `<SPACE>` key to start a new game.
+
+**Don't let these nasty lady bugs catch you!**
