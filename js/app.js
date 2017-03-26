@@ -17,21 +17,11 @@ var borderDown = 406;
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-// Returns random X position for the Gem
-function getRandomPositionX() {
-    return getRandomInt(10, 300);
-}
 // Returns random Y position for enemy or Gem
 // There are 3 rows of size 75 pixels each
 function getRandomPositionY() {
     var num = getRandomInt(1, numEnemies);
     num = num * 75;
-    return num;
-}
-// Returns random speed for enemy
-function getRandomSpeed() {
-    var num = getRandomInt(1, numEnemies);
-    num = num * 50;
     return num;
 }
 // Enemies that our player must avoid
@@ -40,7 +30,7 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
     this.x = 0;
     this.y = getRandomPositionY();
-    this.speed = getRandomSpeed();
+    this.speed = this.getRandomSpeed();
 };
 
 // Update the enemy's position, required method for game Parameter: dt, a time delta between ticks
@@ -50,12 +40,17 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     if (this.x > canvasWidth ) {
         this.x = 0;
-        this.speed = getRandomSpeed();
+        this.speed = this.getRandomSpeed();
     } else {
         this.x += this.speed * dt;
     }
 };
-
+// Returns random speed for enemy
+Enemy.prototype.getRandomSpeed = function() {
+    var num = getRandomInt(1, numEnemies);
+    num = num * 50;
+    return num;
+};
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -63,13 +58,17 @@ Enemy.prototype.render = function() {
 // Object Gem with random X and Y position
 var Gem = function() {
     this.sprite = 'images/GemOrange.png';
-    this.x = getRandomPositionX();
+    this.x = this.getRandomPositionX();
     this.y = getRandomPositionY();
 };
 // Give Gem new position on canvas
 Gem.prototype.newPosition = function() {
-    this.x = getRandomPositionX();
+    this.x = this.getRandomPositionX();
     this.y = getRandomPositionY();
+};
+// Returns random X position for the Gem
+Gem.prototype.getRandomPositionX= function() {
+    return getRandomInt(10, 300);
 };
 // Draw Orange Gem on the screen (canvas)
 Gem.prototype.render = function() {
