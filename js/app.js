@@ -1,3 +1,4 @@
+"use strict";
 // number of enemies on the canvas
 var numEnemies = 3;
 // dimensions of canvas defined in engine.js
@@ -70,7 +71,7 @@ Enemy.prototype.checkCollisions = function() {
         ((this.x + 50) >= player.x) &&
         ((this.y - 50) <= player.y) &&
         ((this.y + 50) >= player.y)) {
-            this.lostLife();
+            player.lostLife();
     };
 };
 // Subclass Gem with random X and Y position
@@ -181,7 +182,7 @@ Player.prototype.checkGemCaught = function() {
         ((gem.x + 50) >= this.x) &&
         ((gem.y - 50) <= this.y) &&
         ((gem.y + 50) >= this.y)) {
-            player.increaseLife();
+            this.increaseLife();
             gem.newPosition();
     }
 };
