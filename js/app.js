@@ -37,10 +37,7 @@ Character.prototype.render = function() {
 // Enemies that our player must avoid
 var Enemy = function() {
     // The image/sprite for our enemies, this uses a helper we've provided to easily load images
-    sprite = 'images/enemy-bug.png';
-    x = 0;
-    y = getRandomPositionY();
-    Character.call(this, sprite, x, y);
+    Character.call(this, 'images/enemy-bug.png', 0, getRandomPositionY());
     this.speed = this.getRandomSpeed();
 };
 // Draw the enemy on the screen, required method Character.prototype.render = function() {
@@ -66,10 +63,7 @@ Enemy.prototype.getRandomSpeed = function() {
 };
 // Subclass Gem with random X and Y position
 var Gem = function() {
-    sprite = 'images/GemOrange.png';
-    x = this.getRandomPositionX();
-    y = getRandomPositionY();
-    Character.call(this, sprite, x, y);
+    Character.call(this, 'images/GemOrange.png', this.getRandomPositionX(), getRandomPositionY());
 };
 //
 Gem.prototype = Object.create(Character.prototype);
@@ -91,16 +85,12 @@ Gem.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    sprite = 'images/char-horn-girl.png';
-    x = playerStartPositionX;
-    y = playerStartPositionY;
-    Character.call(this, sprite, x, y);
+    Character.call(this, 'images/char-horn-girl.png', playerStartPositionX, playerStartPositionY);
     this.speed = 50;
     this.score = 0;
     this.life = 3;
     this.gameStop = false;
 };
-//
 Player.prototype = Object.create(Character.prototype);
 
 Player.prototype.update = function() {
