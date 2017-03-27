@@ -70,7 +70,7 @@ Enemy.prototype.checkCollisions = function() {
         ((this.x + 50) >= player.x) &&
         ((this.y - 50) <= player.y) &&
         ((this.y + 50) >= player.y)) {
-            player.lostLife();
+            this.lostLife();
     };
 };
 // Subclass Gem with random X and Y position
