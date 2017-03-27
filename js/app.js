@@ -24,15 +24,28 @@ function getRandomPositionY() {
     num = num * 75;
     return num;
 }
+//superclass 
+var Character = function(sprite, x, y) {
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+}
+// Draw on the screen required method for game
+Character.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
 // Enemies that our player must avoid
 var Enemy = function() {
     // The image/sprite for our enemies, this uses a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.x = 0;
-    this.y = getRandomPositionY();
+    sprite = 'images/enemy-bug.png';
+    x = 0;
+    y = getRandomPositionY();
+    Character.call(this, sprite, x, y);
     this.speed = this.getRandomSpeed();
 };
-
+// Draw the enemy on the screen, required method Character.prototype.render = function() {
+//     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+Enemy.prototype = Object.create(Character.prototype);
 // Update the enemy's position, required method for game Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
@@ -51,16 +64,15 @@ Enemy.prototype.getRandomSpeed = function() {
     num = num * 50;
     return num;
 };
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-// Object Gem with random X and Y position
+// Subclass Gem with random X and Y position
 var Gem = function() {
-    this.sprite = 'images/GemOrange.png';
-    this.x = this.getRandomPositionX();
-    this.y = getRandomPositionY();
+    sprite = 'images/GemOrange.png';
+    x = this.getRandomPositionX();
+    y = getRandomPositionY();
+    Character.call(this, sprite, x, y);
 };
+//
+Gem.prototype = Object.create(Character.prototype);
 // Give Gem new position on canvas
 Gem.prototype.newPosition = function() {
     this.x = this.getRandomPositionX();
@@ -79,14 +91,17 @@ Gem.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-horn-girl.png';
-    this.x = playerStartPositionX;
-    this.y = playerStartPositionY;
+    sprite = 'images/char-horn-girl.png';
+    x = playerStartPositionX;
+    y = playerStartPositionY;
+    Character.call(this, sprite, x, y);
     this.speed = 50;
     this.score = 0;
     this.life = 3;
     this.gameStop = false;
 };
+//
+Player.prototype = Object.create(Character.prototype);
 
 Player.prototype.update = function() {
     this.checkGameScore();
