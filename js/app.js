@@ -4,14 +4,17 @@ var numEnemies = 3;
 var canvasWidth = 505;
 var canvasHeight = 606;
 //start Player position (X,Y)
-var playerStartPositionX = 200;
+var playerStartPositionX = 203;
 var playerStartPositionY = 400;
 // water position on canvas
 var waterPosition = 20;
 // Boundaries for player sprite
-var borderLeft = 5;
+var borderLeft = 0;
 var borderRight = 420;
 var borderDown = 406;
+//tile size is 101 x 83 defined in engine.js
+var TILE_WIDTH = 101,
+    TILE_HEIGHT = 83;
 
 // Returns a random integer.
 function getRandomInt(min, max) {
@@ -24,7 +27,7 @@ function getRandomPositionY() {
     num = num * 75;
     return num;
 }
-//superclass 
+// Base class for all characters on the screen
 var Character = function(sprite, x, y) {
     this.sprite = sprite;
     this.x = x;
@@ -40,8 +43,6 @@ var Enemy = function() {
     Character.call(this, 'images/enemy-bug.png', 0, getRandomPositionY());
     this.speed = this.getRandomSpeed();
 };
-// Draw the enemy on the screen, required method Character.prototype.render = function() {
-//     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 Enemy.prototype = Object.create(Character.prototype);
 // Update the enemy's position, required method for game Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
@@ -97,7 +98,8 @@ Gem.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     Character.call(this, 'images/char-horn-girl.png', playerStartPositionX, playerStartPositionY);
-    this.speed = 50;
+    this.speedX = TILE_WIDTH;
+    this.speedY = TILE_HEIGHT;
     this.score = 0;
     this.life = 3;
     this.gameStop = false;
@@ -201,16 +203,16 @@ Player.prototype.handleInput = function(actionKeyPress) {
         }
     } else {
         if (actionKeyPress == 'left') {
-            this.x -= this.speed;
+            this.x -= this.speedX;
         }
         if (actionKeyPress == 'right') {
-            this.x += this.speed;
+            this.x += this.speedX;
         }
         if (actionKeyPress == 'up') {
-            this.y -= this.speed;
+            this.y -= this.speedY;
         }
         if (actionKeyPress == 'down') {
-            this.y += this.speed;
+            this.y += this.speedY;
         }
     }
 };
