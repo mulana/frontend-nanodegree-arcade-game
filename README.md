@@ -8,6 +8,11 @@ The objective of the game is to move the main character towards the top of the f
 
 ![Game ScreenShot](/images/GameScreenShot2.png)
 
+### Running instructions
+
+To play a game, download the files to your computer (or deploy them on any server) and open `index.html` in your browser. Game is supported on all major browsers.
+
+
 ### Game Rules
 
  - Use arrow keys to move player in any direction.
