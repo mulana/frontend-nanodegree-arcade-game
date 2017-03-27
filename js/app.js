@@ -48,6 +48,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    this.checkCollisions();
     if (this.x > canvasWidth ) {
         this.x = 0;
         this.speed = this.getRandomSpeed();
@@ -60,6 +61,16 @@ Enemy.prototype.getRandomSpeed = function() {
     var num = getRandomInt(1, numEnemies);
     num = num * 50;
     return num;
+};
+// Collision detection: find collisions with enemies and reduce number of
+// lives when collision is found
+Enemy.prototype.checkCollisions = function() {
+    if (((this.x - 50) <= player.x) &&
+        ((this.x + 50) >= player.x) &&
+        ((this.y - 50) <= player.y) &&
+        ((this.y + 50) >= player.y)) {
+            player.lostLife();
+    };
 };
 // Subclass Gem with random X and Y position
 var Gem = function() {
@@ -97,7 +108,6 @@ Player.prototype.update = function() {
     this.checkGameScore();
     this.checkGameOver();
     this.checkBorder();
-    this.checkCollisions();
     this.checkGemCaught();
 };
 
@@ -162,25 +172,13 @@ Player.prototype.checkBorder = function() {
         this.y = 406;
     }
 };
-// Collision detection: find collisions with enemies and reduce number of
-// lives when collision is found
-Player.prototype.checkCollisions = function() {
-    allEnemies.forEach( function(enemy) {
-        if (((enemy.x - 50) <= player.x) &&
-            ((enemy.x + 50) >= player.x) &&
-            ((enemy.y - 50) <= player.y) &&
-            ((enemy.y + 50) >= player.y)) {
-                player.lostLife();
-        }
-    });
-};
 // Gem detector: find collision with gem and if found: move it to a new position
 // and increase life number
 Player.prototype.checkGemCaught = function() {
-    if (((gem.x - 50)<= player.x) &&
-        ((gem.x + 50) >= player.x) &&
-        ((gem.y - 50) <= player.y) &&
-        ((gem.y + 50) >= player.y)) {
+    if (((gem.x - 50)<= this.x) &&
+        ((gem.x + 50) >= this.x) &&
+        ((gem.y - 50) <= this.y) &&
+        ((gem.y + 50) >= this.y)) {
             player.increaseLife();
             gem.newPosition();
     }
@@ -189,7 +187,6 @@ Player.prototype.checkGemCaught = function() {
 Player.prototype.increaseLife = function() {
     this.life += 1;
 };
-
 // When player hits an enemy, the life is reduced by 1
 Player.prototype.lostLife = function() {
     this.life -= 1;
