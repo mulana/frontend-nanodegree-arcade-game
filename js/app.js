@@ -1,18 +1,18 @@
 "use strict";
 // number of enemies on the canvas
-var numEnemies = 3;
+var NUM_ENEMIES = 3;
 // dimensions of canvas defined in engine.js
-var canvasWidth = 505;
-var canvasHeight = 606;
+var CANVAS_WIDTH = 505;
+var CANVAS_HEIGHT = 606;
 //start Player position (X,Y)
-var playerStartPositionX = 203;
-var playerStartPositionY = 400;
+var PLAYER_START_POSITION_X = 203;
+var PLAYER_START_POSITION_Y = 400;
 // water position on canvas
-var waterPosition = 20;
+var WATER_POSITION = 20;
 // Boundaries for player sprite
-var borderLeft = 0;
-var borderRight = 420;
-var borderDown = 406;
+var BORDER_LEFT = 0;
+var BORDER_RIGHT = 420;
+var BORDER_DOWN = 406;
 //tile size is 101 x 83 defined in engine.js
 var TILE_WIDTH = 101,
     TILE_HEIGHT = 83;
@@ -24,7 +24,7 @@ function getRandomInt(min, max) {
 // Returns random Y position for enemy or Gem
 // There are 3 rows of size 75 pixels each
 function getRandomPositionY() {
-    var num = getRandomInt(1, numEnemies);
+    var num = getRandomInt(1, NUM_ENEMIES);
     num = num * 75;
     return num;
 }
@@ -51,7 +51,7 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.checkCollisions();
-    if (this.x > canvasWidth ) {
+    if (this.x > CANVAS_WIDTH ) {
         this.x = 0;
         this.speed = this.getRandomSpeed();
     } else {
@@ -60,7 +60,7 @@ Enemy.prototype.update = function(dt) {
 };
 // Returns random speed for enemy
 Enemy.prototype.getRandomSpeed = function() {
-    var num = getRandomInt(1, numEnemies);
+    var num = getRandomInt(1, NUM_ENEMIES);
     num = num * 50;
     return num;
 };
@@ -98,7 +98,7 @@ Gem.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    Character.call(this, 'images/char-horn-girl.png', playerStartPositionX, playerStartPositionY);
+    Character.call(this, 'images/char-horn-girl.png', PLAYER_START_POSITION_X, PLAYER_START_POSITION_Y);
     this.speedX = TILE_WIDTH;
     this.speedY = TILE_HEIGHT;
     this.score = 0;
@@ -134,13 +134,13 @@ Player.prototype.render = function(){
 };
 // Player's start position on canvas
 Player.prototype.startPosition = function() {
-    this.x = playerStartPositionX;
-    this.y = playerStartPositionY;
+    this.x = PLAYER_START_POSITION_X;
+    this.y = PLAYER_START_POSITION_Y;
 };
 
 // When player reaches the water we increase the score
 Player.prototype.checkGameScore = function() {
-    if (this.y <= waterPosition) {
+    if (this.y <= WATER_POSITION) {
         this.score += 1;
         this.startPosition();
     }
@@ -166,12 +166,12 @@ Player.prototype.resetGame = function() {
 };
 // Check whether player position is within boundaries
 Player.prototype.checkBorder = function() {
-    if (this.x <= borderLeft) {
+    if (this.x <= BORDER_LEFT) {
         this.x = 405;
-    } else if (this.x >= borderRight) {
+    } else if (this.x >= BORDER_RIGHT) {
         this.x = 10;
     }
-    if (this.y >= borderDown) {
+    if (this.y >= BORDER_DOWN) {
         this.y = 406;
     }
 };
@@ -221,7 +221,7 @@ Player.prototype.handleInput = function(actionKeyPress) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
-for (var i = 0; i < numEnemies; i++) {
+for (var i = 0; i < NUM_ENEMIES; i++) {
     // Instantiate a new Enemies object
     var enemie = new Enemy();
     allEnemies[i] = enemie;
